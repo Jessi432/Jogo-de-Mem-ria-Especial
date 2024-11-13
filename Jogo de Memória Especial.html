@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)https://www.lncc.br/~borges/php/testar.html -->
+<html lang="pt-BR" data-lt-installed="true"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Memória Especial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f8ff;
+            margin: 0;
+            flex-direction: column;
+            text-align: center;
+        }
+        #gameContainer {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #87cefa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .card.flipped {
+            background-color: #ffb6c1;
+            cursor: default;
+        }
+        #message {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #32cd32;
+        }
+    </style>
+</head>
+<body>
+    <h2>Jogo de Memória</h2>
+    <p>Combine todos os pares para desbloquear uma pergunta especial! &#128522;</p>
+    <div id="gameContainer"><div class="card" data-symbol="&#129409;" data-index="0"></div><div class="card" data-symbol="&#128049;" data-index="1"></div><div class="card" data-symbol="&#129418;" data-index="2"></div><div class="card" data-symbol="&#128048;" data-index="3"></div><div class="card" data-symbol="&#128054;" data-index="4"></div><div class="card" data-symbol="&#128056;" data-index="5"></div><div class="card" data-symbol="&#128054;" data-index="6"></div><div class="card" data-symbol="&#128049;" data-index="7"></div><div class="card" data-symbol="&#128060;" data-index="8"></div><div class="card" data-symbol="&#129409;" data-index="9"></div><div class="card" data-symbol="&#128040;" data-index="10"></div><div class="card" data-symbol="&#129418;" data-index="11"></div><div class="card" data-symbol="&#128060;" data-index="12"></div><div class="card" data-symbol="&#128040;" data-index="13"></div><div class="card" data-symbol="&#128056;" data-index="14"></div><div class="card" data-symbol="&#128048;" data-index="15"></div></div>
+    <p id="message">Parabéns, você completou o jogo! Quer sair comigo na sexta-feira? &#128522;</p>
+
+    <script>
+        const cards = [
+            "&#128054;", "&#128049;", "&#128048;", "&#129418;",
+            "&#128054;", "&#128049;", "&#128048;", "&#129418;",
+            "&#128056;", "&#128060;", "&#129409;", "&#128040;",
+            "&#128056;", "&#128060;", "&#129409;", "&#128040;"
+        ];
+
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function createBoard() {
+            shuffle(cards);
+            const gameContainer = document.getElementById("gameContainer");
+            cards.forEach((symbol, index) => {
+                const card = document.createElement("div");
+                card.classList.add("card");
+                card.dataset.symbol = symbol;
+                card.dataset.index = index;
+                card.onclick = () => flipCard(card);
+                gameContainer.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (card.classList.contains("flipped") || flippedCards.length === 2) return;
+
+            card.classList.add("flipped");
+            card.textContent = card.dataset.symbol;
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                checkForMatch();
+            }
+        }
+
+        function checkForMatch() {
+            const [card1, card2] = flippedCards;
+            if (card1.dataset.symbol === card2.dataset.symbol) {
+                matchedPairs++;
+                flippedCards = [];
+                if (matchedPairs === cards.length / 2) {
+                    document.getElementById("message").style.display = "block";
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove("flipped");
+                    card2.classList.remove("flipped");
+                    card1.textContent = "";
+                    card2.textContent = "";
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+
+        createBoard();
+    </script>
+
+
+
+		</body></html>
